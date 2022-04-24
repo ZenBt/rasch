@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/admin.css')}}">
+    <title>Document</title>
+</head>
+
+
+<body>
+    <div class="nav">
+    <ul>
+        <li><a href="{{url_for('admin')}}">Админ-панель</a></li>
+        <li><a href="{{url_for('rubric')}}">Рубрики</a></li>
+        <li><a href="{{url_for('archive')}}">Архив</a></li>
+        <li><a href="{{url_for('posts')}}">Посты</a></li>
+        <li><a href="{{url_for('admin_list')}}">Список Админов</a></li>
+        <li class="title"><a href="{{url_for('index')}}">Лаборатория объективных имерений</a></li>
+    </ul></header></div>
+    
+    {% block content %}
+    
+    {% endblock content %}
+
+</body>
+</html>

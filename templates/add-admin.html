@@ -1,0 +1,8 @@
+{% extends 'admin.html'%}
+{% block content %}
+<form action="" method="post">
+{{form.hidden_tag()}}
+{{form.username()}}
+{{form.pwd()}}
+<input type="submit" value="sbmt"></form>
+{% endblock content %}

@@ -1,0 +1,20 @@
+{% extends 'admin.html' %}
+
+{% block content %}
+<div class="container">
+    <table>
+        <tr>
+            <th class="del">Удалить</th>
+            <th>ID</th>
+            <th>Дата</th>
+        </tr>        
+    {% for el in archive %}
+    <tr>
+        <td></td>
+        <td>{{el.id}}</td>
+        <td>{{el.date}}</td>
+    </tr>
+    {% endfor%}
+    </table>
+</div>
+{% endblock content %}
