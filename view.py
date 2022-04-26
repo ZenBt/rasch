@@ -5,7 +5,7 @@ from flask_login import LoginManager, login_required, login_user
 from app import app
 from forms import LoginForm, PostForm, RubricForm
 from models import Admin, Archive, Posts, Rubrics, db
-from service import AddPost, SidebarInfo
+from service import AddPost, SidebarInfo, PostList
 
 ckeditor = CKEditor(app)
 
@@ -120,10 +120,9 @@ def add_rubric():
 
 @app.route('/<slug>', methods=['POST', 'GET'])
 def show_rubric(slug):
-    rubric = Rubrics.query.filter(Rubrics.slug == slug).first()
-    # добавить сюда список постов относящихся к рубрике
+    post_list=PostList(slug)
     sidebar = SidebarInfo()
-    return render_template('post.html', sidebar=sidebar, rubric=rubric)
+    return render_template('post.html', sidebar=sidebar, post_list=post_list)
 
 
 @app.route('/<year>')
@@ -131,6 +130,9 @@ def archive_year(year):
     pass
 
 
-@app.route('/<slug>')
+@app.route('/post/<slug>')
 def post_info(slug):
-    return 'Test'
+    post = Posts.query.filter(Posts.slug==slug).first()
+    sidebar = SidebarInfo()
+    
+    return render_template('post_info.html', sidebar=sidebar, post=post)

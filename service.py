@@ -70,4 +70,29 @@ class SidebarInfo():
 
     @property
     def archive(self):
-        pass
+        ''' Добавить словарь формата 01: Январь, 02: Ферваль..., доставать и date
+        год доставать date.today().strftime('%Y')
+        месяц date.today().strftime('%m')
+        объект класса datetime.date из бд 
+        for dt in Archive.query.all():
+            dt.date.strftime("%m")'''
+
+
+class PostList():
+    
+    def __init__(self, slug) -> None:
+        self._slug = slug
+    
+    def get_rubric(self) -> Posts:
+        return Rubrics.query.filter(Rubrics.slug==self._slug).first()
+    
+    def get_posts_by_rubric(self):
+        return Posts.query.filter(Posts.rubric_id==self.get_rubric().id).all()
+    
+    @property
+    def rubric(self):
+        return self.get_rubric().title
+    @property
+    def posts(self):
+        return self.get_posts_by_rubric()
+    
