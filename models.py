@@ -50,6 +50,8 @@ class Posts(db.Model):
     slug = db.Column(db.String(125), nullable=True)
     date_id = db.Column(db.Integer, db.ForeignKey("archive.id"))
     rubric_id = db.Column(db.Integer, db.ForeignKey("rubrics.id"))
+    dates = db.relationship('Archive', backref='posts')
+    tags = db.relationship('Rubrics', backref='posts')
 
     def __init__(self, *args, **kwargs) -> None:
         super(Posts, self).__init__(*args, **kwargs)

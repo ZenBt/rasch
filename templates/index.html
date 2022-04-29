@@ -404,24 +404,9 @@ if(11<js)d.write('--'+'>');//--></script>
 <div class="BlockContent">
   <div class="BlockContent-body">
 		<ul>
-			<li><a href='http://www.rasch.org.ru/2013/07' title='Июль 2013'>Июль 2013</a></li>
-	<li><a href='http://www.rasch.org.ru/2011/07' title='Июль 2011'>Июль 2011</a></li>
-	<li><a href='http://www.rasch.org.ru/2011/02' title='Февраль 2011'>Февраль 2011</a></li>
-	<li><a href='http://www.rasch.org.ru/2010/06' title='Июнь 2010'>Июнь 2010</a></li>
-	<li><a href='http://www.rasch.org.ru/2010/02' title='Февраль 2010'>Февраль 2010</a></li>
-	<li><a href='http://www.rasch.org.ru/2009/06' title='Июнь 2009'>Июнь 2009</a></li>
-	<li><a href='http://www.rasch.org.ru/2009/02' title='Февраль 2009'>Февраль 2009</a></li>
-	<li><a href='http://www.rasch.org.ru/2008/06' title='Июнь 2008'>Июнь 2008</a></li>
-	<li><a href='http://www.rasch.org.ru/2007/07' title='Июль 2007'>Июль 2007</a></li>
-	<li><a href='http://www.rasch.org.ru/2007/06' title='Июнь 2007'>Июнь 2007</a></li>
-	<li><a href='http://www.rasch.org.ru/2006/06' title='Июнь 2006'>Июнь 2006</a></li>
-	<li><a href='http://www.rasch.org.ru/2005/06' title='Июнь 2005'>Июнь 2005</a></li>
-	<li><a href='http://www.rasch.org.ru/2004/06' title='Июнь 2004'>Июнь 2004</a></li>
-	<li><a href='http://www.rasch.org.ru/2003/06' title='Июнь 2003'>Июнь 2003</a></li>
-	<li><a href='http://www.rasch.org.ru/2002/06' title='Июнь 2002'>Июнь 2002</a></li>
-	<li><a href='http://www.rasch.org.ru/2001/06' title='Июнь 2001'>Июнь 2001</a></li>
-	<li><a href='http://www.rasch.org.ru/2000/06' title='Июнь 2000'>Июнь 2000</a></li>
-	<li><a href='http://www.rasch.org.ru/1999/06' title='Июнь 1999'>Июнь 1999</a></li>
+      {% for el in sidebar.archive %}
+			<li><a href='#' title='Июль 2013'>{{el}}</a></li>
+      {%endfor%}
 		</ul>
 
   </div>
