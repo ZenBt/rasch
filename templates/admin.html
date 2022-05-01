@@ -21,7 +21,12 @@
     </ul></header></div>
     
     {% block content %}
-    
+    <div class="container">
+        <form action="" method="post">
+     {{form.hidden_tag()}}
+     {{form.article()}}
+     {{form.submit()}}</form>
+    </div>
     {% endblock content %}
 
 </body>

@@ -12,7 +12,7 @@
         </tr>        
     {% for el in admins %}
     <tr>
-        <td></td>
+        <td><a href="{{url_for('del_item', p_id=el.id, model='admin')}}">X</a></td>
         <td>{{el.id}}</td>
         <td>{{el.username}}</td>
         <td>{{el.password}}</td>

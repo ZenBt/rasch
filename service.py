@@ -1,6 +1,7 @@
+from typing import Union
 from datetime import date
 
-from sqlalchemy import desc
+from sqlalchemy import desc, extract
 
 from models import Admin, Archive, Posts, Rubrics, db
 
@@ -21,7 +22,8 @@ class AddPost():
         self.rubric = rubric
         self._post_add()
 
-    def _get_date_id(self) -> int:
+    @staticmethod
+    def get_date_id(date: date) -> int:
         '''
         if there is no dates in database or recieved date not in database
         then add self.date to DB
@@ -29,22 +31,23 @@ class AddPost():
         '''
         last = Archive.query.order_by(desc(Archive.id)).first()
         if last is None:
-            self._archive_add(self.date)
+            AddPost._archive_add(date)
             return 1
-        post_date = Archive.query.filter(Archive.date == self.date).first()
+        post_date = Archive.query.filter(Archive.date == date).first()
         if post_date is None:
-            self._archive_add(self.date)
+            AddPost._archive_add(date)
             return last.id + 1
         return post_date.id
 
-    def _archive_add(self, date) -> None:
+    @staticmethod
+    def _archive_add(date: date) -> None:
         '''add to database recived date'''
         archive = Archive(date=date)
         add_to_db(archive)
 
-    def _post_add(self):
+    def _post_add(self) -> None:
         '''add post with correct date and rubric id to database'''
-        date_id = self._get_date_id()
+        date_id = self.get_date_id(self.date)
         post = Posts(title=self.title, content=self.content,
                      date_id=date_id, rubric_id=self.rubric)
         add_to_db(post)
@@ -73,41 +76,13 @@ class ArchiveInfo():
         return [post_id[0].id for post_id in self._get_last_posts()]
 
 
-class SidebarInfo():
-    '''three property functions contains all information
-    that needs to be displayed at sidebar throughout all web-site
-
-    simply pass the instance of it to the render_temlate function
-    and call property methods'''
-
-    @property
-    def rubrics(self):
-        '''list of all rubrics'''
-        return Rubrics.query.all()
-
-    @property
-    def new_posts(self):
-        '''list of last 5 posts,
-        elements of list are models.Posts instances
-        with all their attributes like title, content, etc.
-        '''
-        arc = ArchiveInfo()
-        return arc
-
-    @property
-    def archive(self):
-        '''list of all dates'''
-        arc_list = ArchiveList()
-        return arc_list
-
-
 class ArchiveList():
     '''class that works like iterator. 
     Items are dates: str, sorted by date descending.
 
     simply pass the instance of it to the render_temlate function
     and use {% for el in instance %} construction'''
-    
+
     _date_dict = {
         '01': 'Январь',
         '02': 'Февраль',
@@ -140,7 +115,35 @@ class ArchiveList():
 
     def _refine_all_dates(self) -> list:
         '''applying refining function to all dates in the list making new one'''
-        return [self._refine_date(date) for date in self._get_all_dates()]
+        return [(self._refine_date(date), date.date) for date in self._get_all_dates()]
+
+
+class SidebarInfo():
+    '''three property functions contains all information
+    that needs to be displayed at sidebar throughout all web-site
+
+    simply pass the instance of it to the render_temlate function
+    and call property methods'''
+
+    @property
+    def rubrics(self) -> list:
+        '''list of all rubrics'''
+        return Rubrics.query.all()
+
+    @property
+    def new_posts(self) -> ArchiveInfo:
+        '''list of last 5 posts,
+        elements of list are models.Posts instances
+        with all their attributes like title, content, etc.
+        '''
+        arc = ArchiveInfo()
+        return arc
+
+    @property
+    def archive(self) -> ArchiveList:
+        '''list of all dates'''
+        arc_list = ArchiveList()
+        return arc_list
 
 
 class PostList():
@@ -150,7 +153,7 @@ class PostList():
     simply pass the instance of it to the render_temlate function
     and call property methods'''
 
-    def __init__(self, slug) -> None:
+    def __init__(self, slug:str) -> None:
         self._slug = slug
 
     def get_rubric(self) -> Rubrics:
@@ -170,3 +173,30 @@ class PostList():
     def posts(self) -> list:
         '''returns list of Posts instancec'''
         return self.get_posts_by_rubric()
+
+
+class PostsFromArchive():
+    def __init__(self, year: int, month:Union[int, None] = None) -> None:
+        self.year = year
+        self.month = month
+    
+    def _get_posts_by_year(self) -> list:
+        return db.engine.execute(
+            f'''SELECT posts.title, posts.slug, posts.content, rubrics.title AS ttl, archive.date, rubrics.slug AS slg
+            FROM posts 
+            JOIN archive ON posts.date_id = archive.id 
+            JOIN rubrics ON posts.rubric_id = rubrics.id 
+            WHERE year(archive.date)={self.year};''').all()
+    
+    def get_posts_by_year_and_month(self) -> list:
+        if self.month is None:
+            return self._get_posts_by_year()
+        return db.engine.execute(
+            f'''SELECT posts.title, posts.slug, posts.content, rubrics.title AS ttl, archive.date, rubrics.slug AS slg
+            FROM posts 
+            JOIN archive ON posts.date_id = archive.id 
+            JOIN rubrics ON posts.rubric_id = rubrics.id 
+            WHERE year(archive.date)={self.year} AND month(archive.date)= {self.month};''').all()
+
+class MainArticle():
+    MAIN_ARTICLE_ID = 1

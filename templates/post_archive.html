@@ -1,0 +1,21 @@
+{% extends 'index.html' %}
+{%block content %}
+{% if posts %}
+{% if month%}
+<h2 class="pagetitle">Архив за {{posts[0].date.strftime('%m')+'.'+posts[0].date.strftime('%Y')}}</h2>
+{% else %}
+<h2 class="pagetitle">Архив за {{posts[0].date.strftime('%Y')}}</h2>
+{% endif%}
+{% for el in posts%}
+<div class="post">
+    <h3><a href="{{url_for('post_info', slug=el.slug)}}">{{el.title}}</a>
+    </h3>
+    <small>{{el.date}}</small>
+</div>
+<div class="entry">{{el.content[:140]|safe}} <a href="{{url_for('post_info', slug=el.slug)}}">(далее...)</a></div>
+<p class="postmetadata">Размещен в <a href="{{url_for('show_rubric', slug=el.slg)}}">{{el.ttl}}</a></p>
+{% endfor %}
+{% else %}
+<h2 class="pagetitle">Записей не найдено</h2>
+{% endif%}
+{% endblock content %}

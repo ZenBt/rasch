@@ -8,7 +8,9 @@ db = SQLAlchemy(app)
 
 
 class Slug():
-
+    ''' class that slugify incoming data
+    recieve model.id, model.title
+    property method return readable url'''
     def __init__(self, id: int, title: str) -> None:
         self._slug = f'{str(id)}-{self.slugify(title)}'
 
@@ -32,11 +34,11 @@ class Slug():
         return slug
 
     @property
-    def slug(self):
+    def slug(self) -> str:
         return self._slug
 
     @staticmethod
-    def get_id(class_):
+    def get_id(class_: db.Model) -> int:
         item = class_.query.order_by(class_.id.desc()).first()
         if item is not None:
             return item.id + 1

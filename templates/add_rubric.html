@@ -2,6 +2,8 @@
 {% block content %}
 <form action="" method="post">
 {{form.hidden_tag()}}
+{%block title%}
 {{form.title()}}
+{%endblock title%}
 {{form.submit()}}</form>
 {% endblock content %}

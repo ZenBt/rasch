@@ -311,7 +311,11 @@ if(11<js)d.write('--'+'>');//--></script>
 
     <div class="post" id="post-20">
       {%block content %}
+      <h2 class="pagetitle">{{post.title}}</h2>
 
+      <div class="post">
+      <div class="entry">{{post.content|safe}}</div>
+      </div>
 		  {% endblock content %}      
     </div>
 
@@ -405,7 +409,7 @@ if(11<js)d.write('--'+'>');//--></script>
   <div class="BlockContent-body">
 		<ul>
       {% for el in sidebar.archive %}
-			<li><a href='#' title='Июль 2013'>{{el}}</a></li>
+			<li><a href="{{url_for('archive_month', year=(el[1].strftime('%Y') | int), month=(el[1].strftime('%m') | int))}}">{{el[0]}}</a></li>
       {%endfor%}
 		</ul>
 

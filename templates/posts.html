@@ -5,13 +5,15 @@
     <h1><a href="{{url_for('add_post')}}">Добавить пост</a>
     </h1><table>
         <tr>
+            <th class="del">Редактировать</th>
             <th class="del">Удалить</th>
             <th>ID</th>
             <th>Заголовок</th>
         </tr>        
     {% for el in posts %}
     <tr>
-        <td></td>
+        <td><a href="{{url_for('edit_post', p_id=el.id)}}">Нажми</a></td>
+        <td><a href="{{url_for('del_item', p_id=el.id, model='posts')}}">X</a></td>
         <td>{{el.id}}</td>
         <td>{{el.title}}</td>
     </tr>

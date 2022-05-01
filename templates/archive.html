@@ -10,7 +10,7 @@
         </tr>        
     {% for el in archive %}
     <tr>
-        <td></td>
+        <td><a href="{{url_for('del_item', p_id=el.id, model='archive')}}">X</a></td>
         <td>{{el.id}}</td>
         <td>{{el.date}}</td>
     </tr>
