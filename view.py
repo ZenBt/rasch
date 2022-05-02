@@ -5,8 +5,8 @@ from flask_login import LoginManager, login_required, login_user
 from app import app
 from forms import LoginForm, PostForm, RubricForm, MainPageForm
 from models import Admin, Archive, Posts, Rubrics, db, Slug
-from service import AddPost, SidebarInfo, PostList, MainArticle, PostsFromArchive
-
+from service import AddPost, SidebarInfo, PostList, MainArticle
+from service import PostsFromArchive, SearchPost
 ckeditor = CKEditor(app)
 
 lm = LoginManager()
@@ -25,6 +25,40 @@ def index():
     main_article_id = MainArticle.MAIN_ARTICLE_ID
     main_article = Posts.query.filter_by(id=main_article_id).first()
     return render_template('index.html', sidebar=sidebar, post=main_article)
+
+
+@app.route('/contacts', methods=['POST', 'GET'])
+def contacts():
+    sidebar = SidebarInfo()
+    contacts_article_id = MainArticle.CONTACTS_ARTICLE_ID
+    contacts_article = Posts.query.filter_by(id=contacts_article_id).first()
+    return render_template('index.html', sidebar=sidebar, post=contacts_article)
+
+
+@app.route('/about', methods=['POST', 'GET'])
+def about():
+    sidebar = SidebarInfo()
+    about_article_id = MainArticle.ABOUT_ARTICLE_ID
+    about_article = Posts.query.filter_by(id=about_article_id).first()
+    return render_template('index.html', sidebar=sidebar, post=about_article)
+
+
+@app.route('/software', methods=['POST', 'GET'])
+def software():
+    sidebar = SidebarInfo()
+    software_article_id = MainArticle.SOFTWARE_ARTICLE_ID
+    software_article = Posts.query.filter_by(id=software_article_id).first()
+    return render_template('index.html', sidebar=sidebar, post=software_article)
+
+@app.route('/search', methods=['POST', 'GET'])
+def search():
+    sidebar = SidebarInfo()
+    if sidebar.get_form.validate_on_submit():
+        sp = SearchPost(sidebar.get_form.search.data)
+        posts = sp.get_post_by_keyword()
+    else:
+        return redirect(url_for('index'))
+    return render_template('search.html', sidebar=sidebar, posts=posts, sp=sp)
 
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -48,11 +82,14 @@ def login():
 @login_required
 def admin():
     form = MainPageForm()
-    form.article.choices = [(post.id, post.title)
+    form.article_about.choices = form.article_software.choices = form.article_contacts.choices = form.article.choices = [(post.id, post.title)
                            for post in Posts.query.all()]
     
     if form.validate_on_submit():
         MainArticle.MAIN_ARTICLE_ID = form.article.data
+        MainArticle.ABOUT_ARTICLE_ID = form.article_about.data
+        MainArticle.SOFTWARE_ARTICLE_ID = form.article_software.data
+        MainArticle.CONTACTS_ARTICLE_ID = form.article_contacts.data
     return render_template('admin.html', form=form)
 
 

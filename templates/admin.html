@@ -24,7 +24,14 @@
     <div class="container">
         <form action="" method="post">
      {{form.hidden_tag()}}
+     <h3>Пост на главной странице:</h3>
      {{form.article()}}
+     <h3>Пост на странице программного обеспечения</h3>
+     {{form.article_software()}}
+     <h3>Пост на странице о нас</h3>
+     {{form.article_about()}}
+     <h3>Пост на странице контактов</h3>
+     {{form.article_contacts()}}
      {{form.submit()}}</form>
     </div>
     {% endblock content %}

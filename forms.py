@@ -26,4 +26,11 @@ class PostForm(FlaskForm):
 
 class MainPageForm(FlaskForm):
     article = SelectField('article', coerce=int)
+    article_contacts = SelectField('article_contacts', coerce=int)
+    article_software = SelectField('article_software', coerce=int)
+    article_about = SelectField('article_about', coerce=int)
+    submit = SubmitField('Submit')
+
+class SearchForm(FlaskForm):
+    search = StringField('Поиск', validators=[DataRequired()])
     submit = SubmitField('Submit')

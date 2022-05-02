@@ -1,9 +1,10 @@
 from typing import Union
 from datetime import date
 
-from sqlalchemy import desc, extract
+from sqlalchemy import desc
 
-from models import Admin, Archive, Posts, Rubrics, db
+from models import Archive, Posts, Rubrics, db
+from forms import SearchForm
 
 
 def add_to_db(instance) -> None:
@@ -99,7 +100,7 @@ class ArchiveList():
     }
 
     def __getitem__(self, key):
-        dates = self._refine_all_dates()
+        dates = self._remove_duplicates()
         return dates[key]
 
     def _get_all_dates(self) -> list:
@@ -116,6 +117,28 @@ class ArchiveList():
     def _refine_all_dates(self) -> list:
         '''applying refining function to all dates in the list making new one'''
         return [(self._refine_date(date), date.date) for date in self._get_all_dates()]
+    
+    def _remove_duplicates(self) -> list:
+        '''removes all duplicates in list of tuples'''
+        dates = self._refine_all_dates()
+        new_dates = []
+        i = 0
+        while i < len(dates)-1:
+            new_dates.append(dates[i])
+            if dates[i][0] == dates[i+1][0]:
+                for j in range(i+1, len(dates)-1):
+
+                    if dates[j][0] != dates[j+1][0]:
+                        i = j
+                        break
+            else:
+                if i == len(dates)-2: # if last one is not the same as previous add to new list
+                    new_dates.append(dates[i+1])
+            i += 1
+                    
+        return new_dates
+            
+            
 
 
 class SidebarInfo():
@@ -144,6 +167,11 @@ class SidebarInfo():
         '''list of all dates'''
         arc_list = ArchiveList()
         return arc_list
+    
+    @property
+    def get_form(self) -> SearchForm:
+        form = SearchForm()
+        return form
 
 
 class PostList():
@@ -182,21 +210,34 @@ class PostsFromArchive():
     
     def _get_posts_by_year(self) -> list:
         return db.engine.execute(
-            f'''SELECT posts.title, posts.slug, posts.content, rubrics.title AS ttl, archive.date, rubrics.slug AS slg
-            FROM posts 
-            JOIN archive ON posts.date_id = archive.id 
-            JOIN rubrics ON posts.rubric_id = rubrics.id 
-            WHERE year(archive.date)={self.year};''').all()
+            SearchPost.SEARCH_POST_TEMPLATE +
+            f'WHERE year(archive.date)={self.year};').all()
     
     def get_posts_by_year_and_month(self) -> list:
         if self.month is None:
             return self._get_posts_by_year()
         return db.engine.execute(
-            f'''SELECT posts.title, posts.slug, posts.content, rubrics.title AS ttl, archive.date, rubrics.slug AS slg
+            SearchPost.SEARCH_POST_TEMPLATE +
+            f'WHERE year(archive.date)={self.year} AND month(archive.date)= {self.month};').all()
+
+
+class SearchPost():
+    
+    SEARCH_POST_TEMPLATE = f'''SELECT posts.title, posts.slug, posts.content, rubrics.title AS ttl, archive.date, rubrics.slug AS slg
             FROM posts 
             JOIN archive ON posts.date_id = archive.id 
-            JOIN rubrics ON posts.rubric_id = rubrics.id 
-            WHERE year(archive.date)={self.year} AND month(archive.date)= {self.month};''').all()
+            JOIN rubrics ON posts.rubric_id = rubrics.id '''
+    
+    def __init__(self, keyword:str) -> None:
+        self._keyword = keyword
 
+    def get_post_by_keyword(self) -> Union[list, None]:
+        return db.engine.execute(
+            self.SEARCH_POST_TEMPLATE + f'WHERE posts.title LIKE "%{self._keyword}%" OR posts.content LIKE "%{self._keyword}%";'
+        )
+    
 class MainArticle():
     MAIN_ARTICLE_ID = 1
+    ABOUT_ARTICLE_ID = 2
+    SOFTWARE_ARTICLE_ID = 3
+    CONTACTS_ARTICLE_ID = 4

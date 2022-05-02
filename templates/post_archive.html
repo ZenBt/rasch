@@ -1,11 +1,13 @@
 {% extends 'index.html' %}
 {%block content %}
 {% if posts %}
+{%block pagetitle%}
 {% if month%}
 <h2 class="pagetitle">Архив за {{posts[0].date.strftime('%m')+'.'+posts[0].date.strftime('%Y')}}</h2>
 {% else %}
 <h2 class="pagetitle">Архив за {{posts[0].date.strftime('%Y')}}</h2>
 {% endif%}
+{%endblock pagetitle%}
 {% for el in posts%}
 <div class="post">
     <h3><a href="{{url_for('post_info', slug=el.slug)}}">{{el.title}}</a>
